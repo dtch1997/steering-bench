@@ -1,4 +1,4 @@
-from contextlib import AbstractContextManager, ExitStack, contextmanager
+from contextlib import AbstractContextManager, ExitStack
 from dataclasses import dataclass, field
 from typing import Any, Literal, Protocol
 from transformers.generation import GenerationConfig
@@ -67,17 +67,6 @@ class Pipeline:
     # NOTE: currently unused
     _print_first_example: bool = True
 
-    @contextmanager
-    def append_hooks(self, hooks: list[PipelineHook]) -> Any:
-        """A context manager for adding temporary hooks to the model."""
-        orig_hooks = self.hooks
-        try:
-            self.hooks = orig_hooks + hooks
-            yield
-        finally:
-            # NOTE: Also resets hooks that were added manually inside the context
-            self.hooks = orig_hooks
-
     def generate(
         self,
         completion: Completion,
@@ -121,7 +110,6 @@ class Pipeline:
             return outputs_str.replace(base_prompt, "")
         return outputs_str
 
-    @torch.no_grad()
     def logprobs(self, completion: Completion) -> TextProbs:
         """Calculate the logprobs for each token in the prompt + output"""
 

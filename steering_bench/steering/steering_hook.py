@@ -24,7 +24,7 @@ class SteeringConfig:
     patch_operator: Literal["add", "ablate_then_add"] = "add"
 
 
-@dataclass(frozen=True)
+@dataclass
 class SteeringHook(PipelineHook):
     """
     Pipeline hook that applies a steering vector to the model.

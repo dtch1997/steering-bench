@@ -29,13 +29,15 @@ def evaluate_steering_vector(
     )
 
     # Evaluate the pipeline
-    with pipeline.append_hooks([steering_hook]):
-        result = evaluate(
-            pipeline,
-            dataset,
-            evaluators=evaluators,
-            show_progress=show_progress,
-        )
+    pipeline.hooks.clear()
+    pipeline.hooks.append(steering_hook)
+    result = evaluate(
+        pipeline,
+        dataset,
+        evaluators=evaluators,
+        show_progress=show_progress,
+    )
+    pipeline.hooks.clear()
 
     return result
 

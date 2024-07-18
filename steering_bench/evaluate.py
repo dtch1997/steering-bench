@@ -189,7 +189,6 @@ def evaluate(
                 pred
             )
         pred.metrics = example_metrics
-        predictions.append(pred)
 
     dataset_metrics: dict[str, float] = {}
     for evaluator in evaluators:
