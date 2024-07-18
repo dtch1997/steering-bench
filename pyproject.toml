@@ -1,6 +1,6 @@
 [project]
 name = "steering-bench"
-version = "0.1.0"
+version = "0.0.0"
 description = "An evaluation suite for steering interventions"
 authors = [{ name = "Daniel Tan", email = "dtch1997@users.noreply.github.com" }]
 dependencies = [
