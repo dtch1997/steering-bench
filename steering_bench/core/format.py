@@ -11,6 +11,8 @@ ICLExample = namedtuple("ICLExample", ["user_msg", "assistant_msg"])
 
 
 class Formatter(abc.ABC):
+    system_prompt: str
+
     """Abstract base class for formatters.
 
     A formatter transformers a completion into another completion, e.g. by applying the chat template.
@@ -26,6 +28,8 @@ class Formatter(abc.ABC):
 
 class ChatFormatter(Formatter):
     """Uses the Huggingface tokenizer to format completions as chat messages."""
+
+    system_prompt: str
 
     def __init__(
         self, tokenizer: Tokenizer, system_prompt: str = DEFAULT_SYSTEM_PROMPT

@@ -1,4 +1,4 @@
-from contextlib import AbstractContextManager, ExitStack
+from contextlib import AbstractContextManager, ExitStack, contextmanager
 from dataclasses import dataclass, field
 from typing import Any, Literal, Protocol
 from transformers.generation import GenerationConfig
@@ -34,6 +34,12 @@ class TextProbs:
 
 @dataclass
 class PipelineContext:
+    """Dataclass to store context information for hooks.
+
+    The pipeline context tells hooks about how the pipeline is being called.
+    Crucially, this is the only way that hooks know about individual prompts
+    """
+
     method: Literal["generate", "logprobs"]
     base_prompt: str
     full_prompt: str
@@ -60,6 +66,16 @@ class Pipeline:
 
     # NOTE: currently unused
     _print_first_example: bool = True
+
+    @contextmanager
+    def append_hooks(self, hooks: list[PipelineHook]) -> Any:
+        """A context manager for adding temporary hooks to the model."""
+        orig_hooks = self.hooks
+        try:
+            self.hooks = orig_hooks + hooks
+        finally:
+            # NOTE: Also resets hooks that were added manually inside the context
+            self.hooks = orig_hooks
 
     def generate(
         self,
@@ -163,3 +179,7 @@ class Pipeline:
             )
             text_probs.append(token_prob)
         return TextProbs(text=full_prompt, token_probs=text_probs)
+
+    def build_full_prompt(self, completion: Completion) -> str:
+        """Syntactic sugar to build a full prompt from a completion"""
+        return self.formatter.format(completion).as_str()
