@@ -28,7 +28,7 @@ def _convert_xrisk_dataset(
             ContrastivePair(
                 prompt = prompt,
                 positive_response=element["answer_matching_behavior"],
-                negative_response=element["answer_non_matching_behavior"],
+                negative_response=element["answer_not_matching_behavior"],
             )
         )
     return dataset

@@ -3,9 +3,10 @@
 import json
 from typing import cast
 
+from steering_bench.core.types import ContrastivePair
+from steering_bench.data import Dataset
 from steering_bench.data.utils import build_dataset_filename
 from steering_bench.utils.io import jdump
-from steering_bench.core.types import Dataset, Example, Completion
 from steering_bench.config import RawDatasetDir, PreprocessedDatasetDir
 
 
@@ -78,18 +79,15 @@ def _convert_persona_dataset(
     dataset: Dataset = []
     for element in preprocess_ab_dataset(dataset_json):
         prompt = element["question"]
-        positive = Completion(
-            prompt=prompt,
-            response=element["answer_matching_behavior"],
-        )
+        positive_response=element["answer_matching_behavior"],
+        negative_response = element["answer_not_matching_behavior"],
 
-        negative = Completion(
+        example = ContrastivePair(
             prompt=prompt,
-            response=element["answer_not_matching_behavior"],
+            positive_response=positive_response,
+            negative_response=negative_response,
         )
-
-        ex = Example(positive=positive, negative=negative, steering_token_index=-2)
-        dataset.append(ex)
+        dataset.append(example)
     return dataset
 
 
