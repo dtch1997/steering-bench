@@ -76,8 +76,8 @@ def _convert_persona_dataset(
     dataset: Dataset = []
     for element in preprocess_ab_dataset(dataset_json):
         prompt = element["question"]
-        positive_response = (element["answer_matching_behavior"],)
-        negative_response = (element["answer_not_matching_behavior"],)
+        positive_response = element["answer_matching_behavior"]
+        negative_response = element["answer_not_matching_behavior"]
 
         example = ContrastivePair(
             prompt=prompt,

@@ -40,6 +40,7 @@ class ChatFormatter(Formatter):
         preprocessed_prompt = self.tokenizer.apply_chat_template(
             chat_history, tokenize=False
         )
+        assert isinstance(preprocessed_prompt, str)
         return Completion(prompt=preprocessed_prompt, response=completion.response)
 
 

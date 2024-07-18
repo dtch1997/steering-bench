@@ -152,10 +152,14 @@ class Pipeline:
             next_tokens.squeeze(0),
             logprobs_of_generated_tokens.squeeze(0),
         ):
-            if token not in self.tokenizer.all_special_ids:
-                token_prob = TokenProb(
-                    token_id=token.item(),
-                    logprob=logprob.item(),
-                )
-                text_probs.append(token_prob)
+            if token in self.tokenizer.all_special_ids:
+                continue
+
+            token_id = token.item()
+            assert isinstance(token_id, int)
+            token_prob = TokenProb(
+                token_id=token_id,
+                logprob=logprob.item(),
+            )
+            text_probs.append(token_prob)
         return TextProbs(text=full_prompt, token_probs=text_probs)

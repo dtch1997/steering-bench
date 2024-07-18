@@ -3,9 +3,9 @@ import pathlib
 from dataclasses import dataclass
 
 from steering_bench.core.types import ContrastivePair
-from steering_bench.config import DatasetDir
+from steering_bench.config import PreprocessedDatasetDir
 from steering_bench.utils.io import jload
-from steering_bench.data.utils import _shuffle_and_split
+from steering_bench.data.utils import _shuffle_and_split, build_dataset_filename
 
 Dataset = list[ContrastivePair]
 
@@ -25,7 +25,7 @@ def _get_all_json_filepaths(root_dir: pathlib.Path) -> list[pathlib.Path]:
 
 
 def _get_available_datasets(
-    dataset_dir: pathlib.Path | None = DatasetDir,
+    dataset_dir: pathlib.Path = PreprocessedDatasetDir,
 ) -> dict[str, pathlib.Path]:
     datasets: dict[str, pathlib.Path] = {}
     for path in _get_all_json_filepaths(dataset_dir):
@@ -53,12 +53,15 @@ def _load_dataset(filepath: pathlib.Path) -> Dataset:
     return dataset
 
 
-def load_dataset(spec: DatasetSpec, dataset_dir: pathlib.Path | None = None):
+def load_dataset(
+    spec: DatasetSpec, dataset_dir: pathlib.Path = PreprocessedDatasetDir
+) -> Dataset:
     """Standard method for loading a dataset."""
 
     datasets = _get_available_datasets(dataset_dir)
     if spec.name not in datasets:
         raise ValueError(f"Unknown dataset: {spec.name}")
 
-    dataset = _load_dataset(spec.name, dataset_dir)
+    filename = build_dataset_filename(spec.name)
+    dataset = _load_dataset(dataset_dir / filename)
     return _shuffle_and_split(dataset, spec.split, spec.seed)
