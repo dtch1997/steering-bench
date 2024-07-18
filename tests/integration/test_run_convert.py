@@ -1,11 +1,6 @@
-import pathlib
-
 from steering_bench.config import RawDatasetDir, PreprocessedDatasetDir
 from steering_bench.data.run_convert import convert_all_datasets
-
-
-def get_dataset_name(relative_path: pathlib.Path, extension=".json") -> str:
-    return str(relative_path).replace(extension, "")
+from steering_bench.data.utils import get_dataset_name
 
 
 def test_all_datasets_are_converted():
@@ -13,7 +8,7 @@ def test_all_datasets_are_converted():
 
     all_raw_dataset_paths = list(RawDatasetDir.glob("**/*.jsonl"))
     all_raw_dataset_names = [
-        get_dataset_name(path.relative_to(RawDatasetDir), extension=".jsonl")
+        get_dataset_name(path.relative_to(RawDatasetDir))
         for path in all_raw_dataset_paths
     ]
     assert len(all_raw_dataset_names) > 0, "No raw datasets found"

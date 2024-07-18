@@ -101,6 +101,12 @@ def build_dataset_filename(
     return f"{base_name}--l-{lang_or_style}.{extension}"
 
 
+def get_dataset_name(relative_path: pathlib.Path) -> str:
+    """Get a dataset name from a relative path"""
+    extension = relative_path.suffix
+    return str(relative_path).replace(extension, "")
+
+
 def parse_dataset_filename(filename: str | pathlib.Path) -> DatasetFilenameSpec:
     filepath = pathlib.Path(filename)
 
