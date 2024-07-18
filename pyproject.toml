@@ -1,0 +1,56 @@
+[project]
+name = "steering-bench"
+version = "0.1.0"
+description = "An evaluation suite for steering interventions"
+authors = [
+    { name = "Daniel Tan", email = "dtch1997@users.noreply.github.com" },
+]
+dependencies = [
+    "pre-commit>=3.7.1",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = { text = "MIT" }
+
+[project.optional-dependencies]
+test = ["ruff>=0.4.3", "pytest>=8.2.0", "pyright>=1.1.361"]
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+distribution = true
+
+[tool.ruff]
+line-length = 88
+lint.select = [
+    "E", # pycodestyle
+    "F", # pyflakes
+    "I",
+]
+exclude = ["third_party", ".venv"]
+lint.ignore = ["F841", "E501", "E741", "I001", "E731"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = ["F401", "F403", "E402"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pdm-python-project-template"]
+force-single-line = true
+single-line-exclusions = ["typing"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+include = ["pdm-python-project-template"]
+
+[tool.semantic_release]
+version_variables = [
+    "steering_bench/__init__.py:__version__",
+    "pyproject.toml:version",
+]
+branch = "main"
