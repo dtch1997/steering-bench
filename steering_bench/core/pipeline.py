@@ -73,6 +73,7 @@ class Pipeline:
         orig_hooks = self.hooks
         try:
             self.hooks = orig_hooks + hooks
+            yield
         finally:
             # NOTE: Also resets hooks that were added manually inside the context
             self.hooks = orig_hooks

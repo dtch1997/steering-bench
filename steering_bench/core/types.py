@@ -28,3 +28,6 @@ class ContrastivePair:
     @property
     def negative_completion(self) -> Completion:
         return Completion(self.prompt, self.negative_response)
+
+
+Dataset = list[ContrastivePair]

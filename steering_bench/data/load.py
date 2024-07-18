@@ -2,12 +2,10 @@ import pathlib
 
 from dataclasses import dataclass
 
-from steering_bench.core.types import ContrastivePair
+from steering_bench.core.types import ContrastivePair, Dataset
 from steering_bench.config import PreprocessedDatasetDir
 from steering_bench.utils.io import jload
 from steering_bench.data.utils import _shuffle_and_split, build_dataset_filename
-
-Dataset = list[ContrastivePair]
 
 
 @dataclass
@@ -24,8 +22,8 @@ def _get_all_json_filepaths(root_dir: pathlib.Path) -> list[pathlib.Path]:
     return list(root_dir.rglob("*.json"))
 
 
-def _get_available_datasets(
-    dataset_dir: pathlib.Path = PreprocessedDatasetDir,
+def _get_all_datasets(
+    dataset_dir: pathlib.Path,
 ) -> dict[str, pathlib.Path]:
     datasets: dict[str, pathlib.Path] = {}
     for path in _get_all_json_filepaths(dataset_dir):
@@ -33,12 +31,12 @@ def _get_available_datasets(
         # dataset_name = path.stem
 
         # Get the relative path from the dataset_dir and use that as the key
-        dataset_name = path.relative_to(dataset_dir).with_suffix("").as_posix()
+        dataset_name = str(path.relative_to(dataset_dir).with_suffix(""))
         datasets[dataset_name] = path.absolute()
     return datasets
 
 
-def _load_dataset(filepath: pathlib.Path) -> Dataset:
+def _load_dataset_from_file(filepath: pathlib.Path) -> Dataset:
     """Load a dataset from a json file."""
     example_dict_list = jload(filepath)
     dataset: Dataset = []
@@ -53,15 +51,19 @@ def _load_dataset(filepath: pathlib.Path) -> Dataset:
     return dataset
 
 
+def list_datasets(dataset_dir: pathlib.Path = PreprocessedDatasetDir) -> list[str]:
+    return list(_get_all_datasets(dataset_dir).keys())
+
+
 def load_dataset(
     spec: DatasetSpec, dataset_dir: pathlib.Path = PreprocessedDatasetDir
 ) -> Dataset:
     """Standard method for loading a dataset."""
 
-    datasets = _get_available_datasets(dataset_dir)
+    datasets = _get_all_datasets(dataset_dir)
     if spec.name not in datasets:
         raise ValueError(f"Unknown dataset: {spec.name}")
 
     filename = build_dataset_filename(spec.name)
-    dataset = _load_dataset(dataset_dir / filename)
+    dataset = _load_dataset_from_file(dataset_dir / filename)
     return _shuffle_and_split(dataset, spec.split, spec.seed)

@@ -1,8 +1,11 @@
 import random
 import pathlib
+import pandas as pd
 
 from typing import TypeVar
 from dataclasses import dataclass
+
+from steering_bench.core.types import Dataset
 from steering_bench.data.translation.constants import (
     LANG_OR_STYLE_MAPPING,
     LangOrStyleCode,
@@ -122,3 +125,20 @@ def parse_dataset_filename(filename: str | pathlib.Path) -> DatasetFilenameSpec:
     return DatasetFilenameSpec(
         base_name=filepath.stem, extension=filepath.suffix, lang_or_style=None
     )
+
+
+def as_dataframe(dataset: Dataset) -> pd.DataFrame:
+    """Converts a StringHandler to a pandas DataFrame."""
+    return pd.DataFrame(dataset)
+
+
+def flatten_dict(nested_dict, prefix="", delimiter="."):
+    """Flattens a nested dictionary"""
+    flattened = {}
+    for key, value in nested_dict.items():
+        new_key = f"{prefix}{key}"
+        if isinstance(value, dict):
+            flattened.update(flatten_dict(value, f"{new_key}{delimiter}"))
+        else:
+            flattened[new_key] = value
+    return flattened
