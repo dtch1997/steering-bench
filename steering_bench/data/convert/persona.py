@@ -1,7 +1,6 @@
 """Script to make datasets for Anthropic's Persona Model-Written Evals"""
 
 import json
-from typing import cast
 
 from steering_bench.core.types import ContrastivePair
 from steering_bench.data import Dataset
@@ -16,14 +15,12 @@ def _maybe_swap(a, b, condition):
     return a, b
 
 
-def preprocess_ab_dataset(
-    list_data: list[dict[str, str]]
-) -> list[dict[str, str]]:
-    """ Processes the dataset to be A/B formatted 
+def preprocess_ab_dataset(list_data: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Processes the dataset to be A/B formatted
 
     Swaps the choice of whether A or B is positive to remove correlation with the behaviour
     Swap every 2 samples to avoid undoing the alternating behavior of the MWE data.
-     
+
     Example input:
     ```
     {
@@ -79,8 +76,8 @@ def _convert_persona_dataset(
     dataset: Dataset = []
     for element in preprocess_ab_dataset(dataset_json):
         prompt = element["question"]
-        positive_response=element["answer_matching_behavior"],
-        negative_response = element["answer_not_matching_behavior"],
+        positive_response = (element["answer_matching_behavior"],)
+        negative_response = (element["answer_not_matching_behavior"],)
 
         example = ContrastivePair(
             prompt=prompt,
@@ -92,7 +89,7 @@ def _convert_persona_dataset(
 
 
 def convert_all_persona_datasets():
-    """ Make all datasets for Anthropic's Persona Model-Written Evals """
+    """Make all datasets for Anthropic's Persona Model-Written Evals"""
     for dataset_path in RawDatasetDir.glob("persona/*.jsonl"):
         with open(dataset_path, "r") as jsonfile:
             list_dataset = [json.loads(line) for line in jsonfile]

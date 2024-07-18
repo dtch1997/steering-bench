@@ -2,7 +2,6 @@
 
 import json
 import re
-from typing import Any, cast
 
 from steering_bench.utils.io import jdump
 from steering_bench.data import Dataset
@@ -16,9 +15,7 @@ def _strip_meta_tags(text: str) -> str:
     return re.sub(r"<META_START>[^<]*<META_END>", "", text)
 
 
-def _convert_xrisk_dataset(
-    dataset_json: list[dict[str, str]]
-) -> Dataset:
+def _convert_xrisk_dataset(dataset_json: list[dict[str, str]]) -> Dataset:
     """Convert a dataset in MWE format to our format"""
     dataset: Dataset = []
     for element in dataset_json:
@@ -26,7 +23,7 @@ def _convert_xrisk_dataset(
         prompt = _strip_meta_tags(prompt)
         dataset.append(
             ContrastivePair(
-                prompt = prompt,
+                prompt=prompt,
                 positive_response=element["answer_matching_behavior"],
                 negative_response=element["answer_not_matching_behavior"],
             )
@@ -35,7 +32,7 @@ def _convert_xrisk_dataset(
 
 
 def convert_all_xrisk_datasets():
-    """ Make all datasets for Anthropic's Advanced AI Risk Model-Written Evals """
+    """Make all datasets for Anthropic's Advanced AI Risk Model-Written Evals"""
     for dataset_path in RawDatasetDir.glob("xrisk/*.jsonl"):
         with open(dataset_path, "r") as jsonfile:
             list_dataset = [json.loads(line) for line in jsonfile]

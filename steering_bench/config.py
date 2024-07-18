@@ -1,6 +1,6 @@
-""" Define configuration variables """
+"""Define configuration variables"""
 
-import pathlib 
+import pathlib
 
 ProjectDir = pathlib.Path(__file__).resolve().parents[1].absolute()
 PackageDir = ProjectDir / "steering_bench"

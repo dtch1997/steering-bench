@@ -1,14 +1,19 @@
-import random 
+import random
 import pathlib
 
 from typing import TypeVar
 from dataclasses import dataclass
-from steering_bench.data.translation.constants import LANG_OR_STYLE_MAPPING, LangOrStyleCode
+from steering_bench.data.translation.constants import (
+    LANG_OR_STYLE_MAPPING,
+    LangOrStyleCode,
+)
 
 T = TypeVar("T")
 
+
 def _parse_split(split_string: str, length: int) -> slice:
     return DatasetSplit.from_str(split_string).as_slice(length)
+
 
 def _shuffle_and_split(items: list[T], split_string: str, seed: int) -> list[T]:
     randgen = random.Random(seed)
@@ -17,11 +22,12 @@ def _shuffle_and_split(items: list[T], split_string: str, seed: int) -> list[T]:
     split = _parse_split(split_string, len(shuffled_items))
     return shuffled_items[split]
 
+
 @dataclass
 class DatasetSplit:
-    """ Represents a split of a dataset. 
-    
-    Example: 
+    """Represents a split of a dataset.
+
+    Example:
     ```
     split = DatasetSplit.from_str("0:100%")
     assert split.as_slice(20) == slice(0, 20)
@@ -70,10 +76,12 @@ class DatasetSplit:
             raise ValueError(f"Invalid index: k={k} in {self}")
 
         return k
-    
+
+
 @dataclass
 class DatasetFilenameSpec:
-    """ Represents a dataset filename """
+    """Represents a dataset filename"""
+
     base_name: str
     extension: str
     lang_or_style: LangOrStyleCode | None = None
@@ -108,4 +116,3 @@ def parse_dataset_filename(filename: str | pathlib.Path) -> DatasetFilenameSpec:
     return DatasetFilenameSpec(
         base_name=filepath.stem, extension=filepath.suffix, lang_or_style=None
     )
-

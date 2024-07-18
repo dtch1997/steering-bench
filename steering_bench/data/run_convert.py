@@ -1,4 +1,4 @@
-""" Script to download and convert all datasets """
+"""Script to download and convert all datasets"""
 
 from steering_bench.data.convert.persona import convert_all_persona_datasets
 from steering_bench.data.convert.xrisk import convert_all_xrisk_datasets

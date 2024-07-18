@@ -2,9 +2,7 @@
 name = "steering-bench"
 version = "0.1.0"
 description = "An evaluation suite for steering interventions"
-authors = [
-    { name = "Daniel Tan", email = "dtch1997@users.noreply.github.com" },
-]
+authors = [{ name = "Daniel Tan", email = "dtch1997@users.noreply.github.com" }]
 dependencies = [
     "pre-commit>=3.7.1",
     "transformers>=4.42.4",
@@ -34,7 +32,7 @@ lint.select = [
     "I",
 ]
 exclude = ["third_party", ".venv"]
-lint.ignore = ["F841", "E501", "E741", "I001", "E731"]
+lint.ignore = ["F841", "E501", "E741", "I001", "E731", "F722"]
 
 [tool.ruff.lint.extend-per-file-ignores]
 "__init__.py" = ["F401", "F403", "E402"]

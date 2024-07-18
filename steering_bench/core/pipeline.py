@@ -47,9 +47,9 @@ class PipelineHook(Protocol):
 
 @dataclass
 class Pipeline:
-    """ A lightweight pipeline for generating completions and calculating logprobs. 
-    
-    Wraps a Huggingface model and tokenizer. 
+    """A lightweight pipeline for generating completions and calculating logprobs.
+
+    Wraps a Huggingface model and tokenizer.
     Supports hooks for running modified inference.
     """
 
@@ -105,12 +105,10 @@ class Pipeline:
         return outputs_str
 
     @torch.no_grad()
-    def logprobs(
-        self, completion: Completion
-    ) -> TextProbs:
+    def logprobs(self, completion: Completion) -> TextProbs:
         """Calculate the logprobs for each token in the prompt + output"""
 
-        # Setup        
+        # Setup
         formatted_completion = self.formatter.format(completion)
         del completion
         base_prompt = formatted_completion.prompt
@@ -133,18 +131,24 @@ class Pipeline:
             outputs = self.model(**inputs, output_hidden_states=False, return_dict=True)
             logprobs = torch.log_softmax(outputs.logits, dim=-1)
 
-        # get the logprob of the generated token 
+        # get the logprob of the generated token
         # NOTE: Be very careful about off-by-one indexing error!
         # -- logprob at index 0 corresponds to the token at index 1
         next_logprobs: Float[torch.Tensor, "batch seq d_vocab"] = logprobs[:, :-1, :]
         next_tokens: Int[torch.Tensor, "batch seq"] = inputs.input_ids[:, 1:]
-        logprobs_of_generated_tokens: Float[torch.Tensor, "batch seq"] = eindex(next_logprobs, next_tokens, "batch seq [batch seq]")    
-        assert logprobs_of_generated_tokens.shape == next_tokens.shape, f"Expected logprobs of shape {next_tokens.shape}; got {logprobs_of_generated_tokens.shape}"
-        assert logprobs_of_generated_tokens.shape[0] == 1, f"Expected batch size of 1, got {logprobs_of_generated_tokens.shape[0]}"
+        logprobs_of_generated_tokens: Float[torch.Tensor, "batch seq"] = eindex(
+            next_logprobs, next_tokens, "batch seq [batch seq]"
+        )
+        assert (
+            logprobs_of_generated_tokens.shape == next_tokens.shape
+        ), f"Expected logprobs of shape {next_tokens.shape}; got {logprobs_of_generated_tokens.shape}"
+        assert (
+            logprobs_of_generated_tokens.shape[0] == 1
+        ), f"Expected batch size of 1, got {logprobs_of_generated_tokens.shape[0]}"
 
         # Create the output
         text_probs: list[TokenProb] = []
-        for (token, logprob) in zip(
+        for token, logprob in zip(
             next_tokens.squeeze(0),
             logprobs_of_generated_tokens.squeeze(0),
         ):
