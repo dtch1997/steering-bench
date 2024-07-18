@@ -1,9 +1,17 @@
 from dataclasses import dataclass
+from transformers import PreTrainedModel, PreTrainedTokenizerBase
+
+
+Model = PreTrainedModel
+Tokenizer = PreTrainedTokenizerBase
 
 @dataclass(frozen=True)
 class Completion:
     prompt: str 
     response: str 
+
+    def as_str(self) -> str:
+        return f"{self.prompt} {self.response}"
 
 
 @dataclass(frozen=True)
