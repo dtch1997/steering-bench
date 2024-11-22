@@ -2,6 +2,7 @@
 
 import abc
 import numpy as np
+import tqdm as tqdm
 
 from typing import Sequence
 from jaxtyping import Float
@@ -56,7 +57,7 @@ def evaluate_propensities(
     propensity_fn: PropensityScore,
     multipliers: Float[np.ndarray, " n_multipliers"],
 ) -> Float[np.ndarray, " n_multipliers"]:
-    """Evaluate the propensity of the pipeline with the given hook on a single example."""
+    """Evaluate the propensity on a single example."""
 
     propensities: list[float] = []
 
@@ -77,12 +78,15 @@ def evaluate_propensities_on_dataset(
     dataset: Sequence[Example],
     propensity_fn: PropensityScore,
     multipliers: Float[np.ndarray, " n_multipliers"],
+    *,
+    show_progress: bool = True,
+    desc: str = "Evaluating propensities",
 ) -> Float[np.ndarray, "n_examples n_multipliers"]:
     """Evaluate the propensity of the pipeline with the given hook on a dataset."""
 
     propensities: list[np.ndarray] = []
 
-    for example in dataset:
+    for example in tqdm.tqdm(dataset, desc=desc, disable=not show_progress):
         propensities.append(
             evaluate_propensities(
                 pipeline,
