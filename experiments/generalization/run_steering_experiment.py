@@ -4,14 +4,14 @@ import numpy as np
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from steering_vectors import train_steering_vector, guess_and_enhance_layer_config
-from steering_bench.utils.build_training_data import build_steering_vector_training_data
+from steering_bench.build_training_data import build_steering_vector_training_data
 from steering_bench.utils.torch import load_model_with_quantization, EmptyTorchCUDACache
 
 from steering_bench.dataset import build_dataset, DatasetSpec
-from steering_bench.format import LlamaChatFormatter
-from steering_bench.pipeline import Pipeline
-from steering_bench.hook import SteeringHook
-from steering_bench.evaluate import evaluate, LogProbDifference, NormalizedPositiveProbability
+from steering_bench.core.format import LlamaChatFormatter
+from steering_bench.core.pipeline import Pipeline
+from steering_bench.core.hook import SteeringHook
+from steering_bench.core.evaluate import evaluate, LogProbDifference, NormalizedPositiveProbability
 from steering_bench.metric import get_steerability_slope
 
 if __name__ == "__main__":

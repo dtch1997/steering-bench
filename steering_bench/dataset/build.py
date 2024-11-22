@@ -3,7 +3,7 @@ import pathlib
 
 from typing import TypeVar
 
-from steering_bench.core import Example, Dataset, Completion
+from steering_bench.core.types import Example, Dataset, Completion
 from steering_bench.dataset.spec import DatasetSplit, DatasetSpec
 from steering_bench.utils.io import jload
 from steering_bench.utils.path import dataset_dir

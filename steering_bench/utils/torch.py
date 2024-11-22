@@ -1,7 +1,7 @@
 import gc
 import torch
 
-from steering_bench.core import Model, Tokenizer
+from steering_bench.core.types import Model, Tokenizer
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 def load_model_with_quantization(

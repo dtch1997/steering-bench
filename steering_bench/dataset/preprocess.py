@@ -4,7 +4,7 @@ import json
 import re
 import pathlib
 
-from steering_bench.core import Dataset, Completion, Example
+from steering_bench.core.types import Dataset, Completion, Example
 from steering_bench.utils.path import raw_dataset_dir, assets_dir
 from steering_bench.utils.io import jdump
 

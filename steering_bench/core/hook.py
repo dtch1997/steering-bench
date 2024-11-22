@@ -8,8 +8,9 @@ from steering_vectors import (
     ablation_then_addition_operator,
 )
 
-from steering_bench.pipeline import PipelineContext, PipelineHook
-from steering_bench.core import Tokenizer
+from steering_bench.core.pipeline import PipelineContext, PipelineHook
+from steering_bench.core.types import Tokenizer
+
 
 @dataclass
 class SteeringHook(PipelineHook):
@@ -21,15 +22,15 @@ class SteeringHook(PipelineHook):
     """
 
     steering_vector: SteeringVector
-    direction_multiplier: float = 0.0 # 0.0 means no steering
-    layer: int | None = None # If none, will steer at all layers
+    direction_multiplier: float = 0.0  # 0.0 means no steering
+    layer: int | None = None  # If none, will steer at all layers
     patch_generation_tokens_only: bool = True
-    skip_first_n_generation_tokens: int = 0
+    skip_first_n_generation_tokens: int = 1  # The first answer token is '(', so skip it
     layer_config: ModelLayerConfig | None = None
     patch_operator: Literal["add", "ablate_then_add"] = "add"
 
     def _get_scoped_steering_vector(self) -> SteeringVector:
-        """ Get the steering vector scoped to the layer if specified """
+        """Get the steering vector scoped to the layer if specified"""
         if self.layer is None:
             return self.steering_vector
         return SteeringVector(

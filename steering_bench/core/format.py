@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List
 from typing_extensions import override
 
-from steering_bench.core import Completion, Formatter as FormatterInterface
+from steering_bench.core.types import Completion, Formatter as FormatterInterface
 
 LLAMA_7B_DEFAULT_SYSTEM_PROMPT = "You are a helpful, honest and concise assistant."
 LLAMA_7B_DEFAULT_COMPLETION_TEMPLATE = "{prompt} {response}"
@@ -107,7 +107,7 @@ class LlamaChatFormatter(Formatter):
     Based on: https://github.com/nrimsky/SycophancySteering/blob/main/utils/tokenize_llama.py#L30
     """
 
-    system_prompt: str | None
+    system_prompt: str
 
     B_INST = "[INST]"
     E_INST = "[/INST]"
@@ -119,7 +119,7 @@ class LlamaChatFormatter(Formatter):
         completion_template: str = "{prompt} {response}",
         msg_separator: str = "\n",
         prompt_prefix: str | None = None,
-        system_prompt: str | None = "You are a helpful, honest and concise assistant.",
+        system_prompt: str = "You are a helpful, honest and concise assistant.",
     ) -> None:
         self.system_prompt = system_prompt
         self.prompt_prefix = prompt_prefix
@@ -150,7 +150,7 @@ class QwenChatFormatter(Formatter):
     Wrap conversation using Qwen chat template.
     """
 
-    system_prompt: str | None
+    system_prompt: str
 
     B_INST = "<|im_start|>"
     E_INST = "<|im_end|>\n"
@@ -163,7 +163,7 @@ class QwenChatFormatter(Formatter):
         completion_template: str = "{prompt} {response}",
         msg_separator: str = "\n",
         prompt_prefix: str | None = None,
-        system_prompt: str | None = "You are a helpful, honest and concise assistant.",
+        system_prompt: str = "You are a helpful, honest and concise assistant.",
     ) -> None:
         self.system_prompt = system_prompt
         self.prompt_prefix = prompt_prefix
@@ -197,7 +197,7 @@ class Llama3ChatFormatter(Formatter):
     Wrap conversation using Llama3 chat template.
     """
 
-    system_prompt: str | None
+    system_prompt: str
 
     E_INST = "<|eot_id|>"
     B_SYS = "<|start_header_id|>system<|end_header_id|>\n\n"
@@ -209,7 +209,7 @@ class Llama3ChatFormatter(Formatter):
         completion_template: str = "{prompt}\n\n{response}",
         msg_separator: str = "\n",
         prompt_prefix: str | None = None,
-        system_prompt: str | None = "You are a helpful, honest and concise assistant.",
+        system_prompt: str = "You are a helpful, honest and concise assistant.",
     ) -> None:
         self.system_prompt = system_prompt
         self.prompt_prefix = prompt_prefix

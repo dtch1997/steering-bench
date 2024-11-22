@@ -1,10 +1,10 @@
 import torch
-from contextlib import AbstractContextManager, ExitStack
-from typing import Literal, Any, Protocol
+from contextlib import AbstractContextManager, ExitStack, contextmanager
+from typing import Literal, Any, Protocol, Iterator
 from dataclasses import dataclass, field
 from transformers.generation import GenerationConfig
 
-from steering_bench.core import Model, Tokenizer, Completion, Formatter, Pipeline as PipelineInterface, TokenProb, TextProbs
+from steering_bench.core.types import Model, Tokenizer, Completion, Formatter, Pipeline as PipelineInterface, TokenProb, TextProbs
 
 @dataclass
 class PipelineContext:
@@ -26,6 +26,23 @@ class Pipeline(PipelineInterface):
     formatter: Formatter
     conversation_history: list[Completion] = field(default_factory=list)
     hooks: list[PipelineHook] = field(default_factory=list)
+
+    @contextmanager
+    def use_hooks(
+        self,
+        hooks: list[PipelineHook],
+    ) -> Iterator["Pipeline"]:
+        """Override existing hooks for the pipeline
+
+        Restores the original hooks after the context manager exits
+        """
+        orig_hooks = self.hooks
+        self.hooks = hooks
+        try:
+            yield self
+        finally:
+            # Restore the original hooks
+            self.hooks = orig_hooks
 
     def build_generation_prompt(self, completion: Completion) -> str:
         """Build the generation prompt from the completion"""

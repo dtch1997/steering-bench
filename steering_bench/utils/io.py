@@ -28,10 +28,10 @@ def _make_r_io_base(f, mode: str):
 class DataclassEncoder(json.JSONEncoder):
     """JSON encoder which can properly handle dataclasses."""
 
-    def default(self, obj: Any) -> Any:
-        if is_dataclass(obj):
-            return asdict(obj)
-        return json.JSONEncoder.default(self, obj)
+    def default(self, o: Any) -> Any:
+        if is_dataclass(o):
+            return asdict(o)  # type: ignore
+        return json.JSONEncoder.default(self, o)
 
 
 def jdump(obj, f, mode="w", indent=4):

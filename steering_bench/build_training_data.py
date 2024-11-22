@@ -1,8 +1,8 @@
 import logging
 
 from steering_vectors import SteeringVectorTrainingSample
-from steering_bench.core import Dataset
-from steering_bench.pipeline import Pipeline
+from steering_bench.core.types import Dataset
+from steering_bench.core.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 
