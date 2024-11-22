@@ -1,4 +1,4 @@
-""" Script to download all datasets """
+""" Download raw datasets """
 
 import requests
 import os
@@ -50,14 +50,10 @@ def download_github_directory(repo_owner, repo_name, directory_path, branch='mai
     
     return True
 
-def download_mwe_persona():
+def download_persona():
     """ Download MWE-Persona dataset """
     download_github_directory('anthropics', 'evals', 'persona', output_dir=raw_dataset_dir / 'persona')
 
-def download_mwe_xrisk():
+def download_xrisk():
     """ Download MWE-XRisk dataset """
-    download_github_directory('anthropics', 'evals', 'advanced-ai-risk/lm_generated_evals', output_dir=raw_dataset_dir / 'xrisk')    
-
-if __name__ == '__main__':
-    download_mwe_persona()
-    download_mwe_xrisk()
+    download_github_directory('anthropics', 'evals', 'advanced-ai-risk/lm_generated_evals', output_dir=raw_dataset_dir / 'xrisk')

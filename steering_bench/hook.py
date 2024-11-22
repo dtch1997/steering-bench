@@ -6,7 +6,6 @@ from steering_vectors import (
     SteeringVector,
     ModelLayerConfig,
     ablation_then_addition_operator,
-    guess_and_enhance_layer_config,
 )
 
 from steering_bench.pipeline import PipelineContext, PipelineHook
@@ -89,34 +88,3 @@ def _find_generation_start_token_index(
     # The output of the last prompt token is the first generation token
     # so need to subtract 1 here
     return prompt_len - 1
-
-class UpdateSystemPromptHook(PipelineHook):
-    """ Updates the system prompt while hook is active, then resets it """
-    
-    def __init__(self, system_prompt: str):
-        self.system_prompt = system_prompt
-
-    @contextmanager
-    def __call__(self, context: PipelineContext):
-        original_prompt = context.pipeline.formatter.system_prompt
-        context.pipeline.formatter.system_prompt = self.system_prompt
-        try:
-            yield
-        finally:
-            context.pipeline.formatter.system_prompt = original_prompt
-
-
-class UpdateCompletionTemplateHook(PipelineHook):
-    """ Updates the completion template while hook is active, then resets it """
-    
-    def __init__(self, completion_template: str):
-        self.completion_template = completion_template
-
-    @contextmanager
-    def __call__(self, context: PipelineContext):
-        original_template = context.pipeline.formatter.completion_template
-        context.pipeline.formatter.completion_template = self.completion_template
-        try:
-            yield
-        finally:
-            context.pipeline.formatter.completion_template = original_template

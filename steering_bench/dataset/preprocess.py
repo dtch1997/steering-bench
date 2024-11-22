@@ -1,4 +1,4 @@
-"""Script to make datasets for Anthropic's Persona Model-Written Evals"""
+""" Preprocessing logic for datasets """
 
 import json
 import re
@@ -112,7 +112,7 @@ def convert_persona_dataset(
         dataset.append(ex)
     return dataset
 
-def preprocess_persona_datasets():
+def preprocess_persona():
     """Make MWE dataset"""
     for dataset_path in get_all_files_in_dir(raw_dataset_dir / "persona"):
         # Load the jsonl file
@@ -123,7 +123,7 @@ def preprocess_persona_datasets():
         dataset_name = dataset_path.stem
         jdump(dataset, assets_dir / "processed_datasets" / "persona" / f"{dataset_name}.json")
 
-def preprocess_xrisk_datasets():
+def preprocess_xrisk():
     """Make MWE dataset"""
     for dataset_path in get_all_files_in_dir(raw_dataset_dir / "xrisk"):
         with open(dataset_path, "r") as jsonfile:
@@ -132,7 +132,3 @@ def preprocess_xrisk_datasets():
         dataset_name = dataset_path.stem
         xrisk_dataset: Dataset = convert_xrisk_dataset(list_dataset)
         jdump(xrisk_dataset, assets_dir / "processed_datasets" / "xrisk" / f"{dataset_name}.json")
-
-if __name__ == "__main__":
-    preprocess_persona_datasets()
-    preprocess_xrisk_datasets()

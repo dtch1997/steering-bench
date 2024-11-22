@@ -1,12 +1,14 @@
+""" Script to run a steering experiment and calculate steerability """
+
 import numpy as np
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from steering_vectors import train_steering_vector, guess_and_enhance_layer_config
 from steering_bench.utils.build_training_data import build_steering_vector_training_data
-from steering_bench.utils.torch import load_model_with_quantization
+from steering_bench.utils.torch import load_model_with_quantization, EmptyTorchCUDACache
 
 from steering_bench.dataset import build_dataset, DatasetSpec
-from steering_bench.format import IdentityFormatter
+from steering_bench.format import LlamaChatFormatter
 from steering_bench.pipeline import Pipeline
 from steering_bench.hook import SteeringHook
 from steering_bench.evaluate import evaluate, LogProbDifference, NormalizedPositiveProbability
@@ -14,18 +16,14 @@ from steering_bench.metric import get_steerability_slope
 
 if __name__ == "__main__":
     model_name = "meta-llama/Llama-2-7b-chat-hf"
-    dataset_name = "power-seeking-inclination"
-    train_spec = DatasetSpec(name=dataset_name, split = "0%:1%", seed = 0)
+    dataset_name = "corrigible-neutral-HHH"
+    train_spec = DatasetSpec(name=dataset_name, split = "0%:10%", seed = 0)
     test_spec = DatasetSpec(name=dataset_name, split = "99%:100%", seed = 0)
     train_dataset = build_dataset(train_spec)
     test_dataset = build_dataset(test_spec)
 
-    model, tokenizer = load_model_with_quantization(model_name)
-
-    # model = AutoModelForCausalLM.from_pretrained(model_name)
-    # tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-    formatter = IdentityFormatter()
+    model, tokenizer = load_model_with_quantization(model_name, load_in_8bit=True)
+    formatter = LlamaChatFormatter()
     pipeline = Pipeline(model=model, tokenizer=tokenizer, formatter=formatter)
 
     training_data = build_steering_vector_training_data(pipeline, train_dataset)
@@ -48,7 +46,7 @@ if __name__ == "__main__":
         steering_hook = SteeringHook(
             steering_vector,
             direction_multiplier=multiplier,
-            layer = 8,
+            layer = 13,
             layer_config = guess_and_enhance_layer_config(pipeline.model),
         )
         pipeline.hooks.append(steering_hook)
