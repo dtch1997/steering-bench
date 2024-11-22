@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List
 from typing_extensions import override
 
-from steering_bench.core import Completion
+from steering_bench.core import Completion, Formatter as FormatterInterface
 
 LLAMA_7B_DEFAULT_SYSTEM_PROMPT = "You are a helpful, honest and concise assistant."
 LLAMA_7B_DEFAULT_COMPLETION_TEMPLATE = "{prompt} {response}"
@@ -23,7 +23,7 @@ class FormatContext:
         return len(self.completions)
 
 
-class Formatter(abc.ABC):
+class Formatter(FormatterInterface):
     """Describes how to format examples as completions"""
 
     msg_separator: str = "\n"

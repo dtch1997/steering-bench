@@ -6,6 +6,7 @@ from steering_vectors import (
     SteeringVector,
     ModelLayerConfig,
     ablation_then_addition_operator,
+    guess_and_enhance_layer_config,
 )
 
 from steering_bench.pipeline import PipelineContext, PipelineHook
@@ -21,11 +22,23 @@ class SteeringHook(PipelineHook):
     """
 
     steering_vector: SteeringVector
-    direction_multiplier: float
-    patch_generation_tokens_only: bool
-    skip_first_n_generation_tokens: int
-    layer_config: ModelLayerConfig | None
+    direction_multiplier: float = 0.0 # 0.0 means no steering
+    layer: int | None = None # If none, will steer at all layers
+    patch_generation_tokens_only: bool = True
+    skip_first_n_generation_tokens: int = 0
+    layer_config: ModelLayerConfig | None = None
     patch_operator: Literal["add", "ablate_then_add"] = "add"
+
+    def _get_scoped_steering_vector(self) -> SteeringVector:
+        """ Get the steering vector scoped to the layer if specified """
+        if self.layer is None:
+            return self.steering_vector
+        return SteeringVector(
+            layer_activations={
+                self.layer: self.steering_vector.layer_activations[self.layer]
+            },
+            layer_type=self.steering_vector.layer_type,
+        )
 
     # PipelineContext is created in both `pipeline.generate` or `pipeline.calculate_output_logprobs`,
     # It also contains info about the current prompt which is used to determine which tokens to patch.
@@ -43,7 +56,7 @@ class SteeringHook(PipelineHook):
                 min_token_index = gen_start_index + self.skip_first_n_generation_tokens
             # multiplier 0 is equivalent to no steering, so just skip patching in that case
             if self.direction_multiplier != 0:
-                handle = self.steering_vector.patch_activations(
+                handle = self._get_scoped_steering_vector().patch_activations(
                     model=context.pipeline.model,
                     layer_config=self.layer_config,
                     multiplier=self.direction_multiplier,
@@ -76,3 +89,34 @@ def _find_generation_start_token_index(
     # The output of the last prompt token is the first generation token
     # so need to subtract 1 here
     return prompt_len - 1
+
+class UpdateSystemPromptHook(PipelineHook):
+    """ Updates the system prompt while hook is active, then resets it """
+    
+    def __init__(self, system_prompt: str):
+        self.system_prompt = system_prompt
+
+    @contextmanager
+    def __call__(self, context: PipelineContext):
+        original_prompt = context.pipeline.formatter.system_prompt
+        context.pipeline.formatter.system_prompt = self.system_prompt
+        try:
+            yield
+        finally:
+            context.pipeline.formatter.system_prompt = original_prompt
+
+
+class UpdateCompletionTemplateHook(PipelineHook):
+    """ Updates the completion template while hook is active, then resets it """
+    
+    def __init__(self, completion_template: str):
+        self.completion_template = completion_template
+
+    @contextmanager
+    def __call__(self, context: PipelineContext):
+        original_template = context.pipeline.formatter.completion_template
+        context.pipeline.formatter.completion_template = self.completion_template
+        try:
+            yield
+        finally:
+            context.pipeline.formatter.completion_template = original_template
