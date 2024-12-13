@@ -115,7 +115,7 @@ def convert_persona_dataset(
 
 def preprocess_persona():
     """Make MWE dataset"""
-    for dataset_path in get_all_files_in_dir(raw_dataset_dir / "persona"):
+    for dataset_path in get_all_files_in_dir(raw_dataset_dir / "mwe_persona"):
         # Load the jsonl file
         with open(dataset_path, "r") as jsonfile:
             list_dataset = [json.loads(line) for line in jsonfile]
@@ -124,13 +124,13 @@ def preprocess_persona():
         dataset_name = dataset_path.stem
         jdump(
             dataset,
-            assets_dir / "processed_datasets" / "persona" / f"{dataset_name}.json",
+            assets_dir / "processed_datasets" / "mwe_persona" / f"{dataset_name}.json",
         )
 
 
 def preprocess_xrisk():
     """Make MWE dataset"""
-    for dataset_path in get_all_files_in_dir(raw_dataset_dir / "xrisk"):
+    for dataset_path in get_all_files_in_dir(raw_dataset_dir / "mwe_xrisk"):
         with open(dataset_path, "r") as jsonfile:
             list_dataset = [json.loads(line) for line in jsonfile]
 
@@ -138,5 +138,5 @@ def preprocess_xrisk():
         xrisk_dataset: Dataset = convert_xrisk_dataset(list_dataset)
         jdump(
             xrisk_dataset,
-            assets_dir / "processed_datasets" / "xrisk" / f"{dataset_name}.json",
+            assets_dir / "processed_datasets" / "mwe_xrisk" / f"{dataset_name}.json",
         )

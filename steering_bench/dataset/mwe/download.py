@@ -62,7 +62,7 @@ def download_github_directory(
 def download_persona():
     """Download MWE-Persona dataset"""
     download_github_directory(
-        "anthropics", "evals", "persona", output_dir=raw_dataset_dir / "persona"
+        "anthropics", "evals", "persona", output_dir=raw_dataset_dir / "mwe_persona"
     )
 
 
@@ -72,5 +72,5 @@ def download_xrisk():
         "anthropics",
         "evals",
         "advanced-ai-risk/lm_generated_evals",
-        output_dir=raw_dataset_dir / "xrisk",
+        output_dir=raw_dataset_dir / "mwe_xrisk",
     )
