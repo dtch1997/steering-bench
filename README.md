@@ -1,5 +1,7 @@
 # Steering Bench
 
+[![arXiv](https://img.shields.io/badge/arXiv-2407.12404-b31b1b.svg)](https://arxiv.org/abs/2407.12404)
+
 Official codebase for the paper: [Analyzing the Generalization and Reliability of Steering Vectors](https://arxiv.org/abs/2407.12404)
 
 ## Quickstart
@@ -23,6 +25,7 @@ This repository also provides off-the-shelf components that make it easy to run 
 - [Formatter](steering_bench/core/format.py), an abstraction for prompt-based scaffolding
 - [PipelineHook](steering_bench/core/pipeline), an abstraction for generic steering interventions
 - [SteeringHook](steering_bench/core/hook), an implementation of applying steering vectors using our [steering vectors library](https://github.com/steering-vectors/steering-vectors/)
+- [Steerability metrics](steering_bench/core/metric.py) used in the paper
 
 ## Paper Reproduction
 This codebase has been simplified to improve readability, and was not directly used in generating results for the paper. If you would like to reproduce specific plots in our paper, refer to our [original codebase](https://github.com/dtch1997/repepo). 
