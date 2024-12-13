@@ -40,12 +40,10 @@ jobs:
             huggingface-${{ runner.os }}-${{ matrix.python-version }}-
       - name: Install dependencies
         run: pdm install
-      - name: check formatting
-        run: pdm run ruff format --check
-      - name: check linting
-        run: pdm run ruff check
-      - name: check types
-        run: pdm run pyright
+      - name: Install pre-commit hooks
+        run: pdm run pre-commit install
+      - name: Ensure pre-commit hooks pass
+        run: pdm run pre-commit run --all-files
       - name: build
         run: pdm build
       - name: test
