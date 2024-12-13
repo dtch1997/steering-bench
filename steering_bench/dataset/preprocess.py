@@ -1,4 +1,4 @@
-""" Preprocessing logic for datasets """
+"""Preprocessing logic for datasets"""
 
 import json
 import re
@@ -8,11 +8,13 @@ from steering_bench.core.types import Dataset, Completion, Example
 from steering_bench.utils.path import raw_dataset_dir, assets_dir
 from steering_bench.utils.io import jdump
 
+
 def get_all_files_in_dir(
     dir: pathlib.Path,
     extension: str = ".jsonl",
 ) -> list[pathlib.Path]:
     return list(dir.glob(f"*{extension}" if extension else "*"))
+
 
 def _maybe_swap(a, b, condition):
     if condition:
@@ -21,10 +23,10 @@ def _maybe_swap(a, b, condition):
 
 
 def preprocess_and_randomize_dataset(
-    list_data: list[dict[str, str]]
+    list_data: list[dict[str, str]],
 ) -> list[dict[str, str]]:
     """Preprocess and randomize the dataset
-    
+
     Randomization ensures that there are an equal number of samples where the correct answer is A and B respectively.
     """
     new_list_data = []
@@ -63,9 +65,7 @@ def strip_meta_tags(text: str) -> str:
     return re.sub(r"<META_START>[^<]*<META_END>", "", text)
 
 
-def convert_xrisk_dataset(
-    mwe: list[dict[str, str]]
-) -> Dataset:
+def convert_xrisk_dataset(mwe: list[dict[str, str]]) -> Dataset:
     """Convert a MWE XRisk dataset to our format"""
     mwe_dataset: Dataset = []
     for element in mwe:
@@ -112,6 +112,7 @@ def convert_persona_dataset(
         dataset.append(ex)
     return dataset
 
+
 def preprocess_persona():
     """Make MWE dataset"""
     for dataset_path in get_all_files_in_dir(raw_dataset_dir / "persona"):
@@ -121,7 +122,11 @@ def preprocess_persona():
 
         dataset = convert_persona_dataset(list_dataset)
         dataset_name = dataset_path.stem
-        jdump(dataset, assets_dir / "processed_datasets" / "persona" / f"{dataset_name}.json")
+        jdump(
+            dataset,
+            assets_dir / "processed_datasets" / "persona" / f"{dataset_name}.json",
+        )
+
 
 def preprocess_xrisk():
     """Make MWE dataset"""
@@ -131,4 +136,7 @@ def preprocess_xrisk():
 
         dataset_name = dataset_path.stem
         xrisk_dataset: Dataset = convert_xrisk_dataset(list_dataset)
-        jdump(xrisk_dataset, assets_dir / "processed_datasets" / "xrisk" / f"{dataset_name}.json")
+        jdump(
+            xrisk_dataset,
+            assets_dir / "processed_datasets" / "xrisk" / f"{dataset_name}.json",
+        )

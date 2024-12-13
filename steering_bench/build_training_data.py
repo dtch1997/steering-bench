@@ -6,17 +6,19 @@ from steering_bench.core.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 
+
 def _validate_train_dataset(dataset: Dataset):
     steering_token_index = dataset[0].steering_token_index
     for example in dataset:
         assert example.steering_token_index == steering_token_index
 
+
 def build_steering_vector_training_data(
     pipeline: Pipeline,
     dataset: Dataset,
 ) -> list[SteeringVectorTrainingSample]:
-    """ Build steering vector training data 
-    
+    """Build steering vector training data
+
     Checks that all examples have the same steering token index
     Applies the pipeline's formatting logic to build the positive and negative examples
     """

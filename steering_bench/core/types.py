@@ -1,5 +1,4 @@
 import abc
-import torch
 
 from typing import Any
 from dataclasses import dataclass

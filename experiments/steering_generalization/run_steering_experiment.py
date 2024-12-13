@@ -1,4 +1,4 @@
-""" Script to perform out-of-distribution steering """
+"""Script to perform out-of-distribution steering"""
 
 import torch
 import numpy as np
@@ -33,7 +33,6 @@ persona_specs = [
 
 
 if __name__ == "__main__":
-
     # Load the dataset
     dataset_name = "corrigible-neutral-HHH"
     train_spec = DatasetSpec(name=dataset_name, split="0%:10%", seed=0)
@@ -79,7 +78,6 @@ if __name__ == "__main__":
 
         # Evaluate propensities
         for test_persona_spec in persona_specs:
-
             # Load pipeline
             formatter = make_formatter_for_persona(dataset_name, test_persona_spec)
             pipeline = Pipeline(model=model, tokenizer=tokenizer, formatter=formatter)

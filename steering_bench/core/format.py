@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from steering_bench.core.types import Formatter as FormatterInterface, Tokenizer
+from steering_bench.core.types import Formatter as FormatterInterface
 
 
 @dataclass
@@ -8,7 +8,6 @@ class Formatter(FormatterInterface):
     user_message: str = ""  # A standard string that gets prepended to the prompt
 
     def __call__(self, prompt: str):
-
         prompt = self.user_message + prompt
 
         messages = [

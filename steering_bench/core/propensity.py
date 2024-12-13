@@ -4,7 +4,6 @@ from steering_bench.core.evaluate import EvalPrediction, PropensityScore
 
 
 class Accuracy(PropensityScore):
-
     requires_probs = True
 
     def get_metric_name(self) -> str:
@@ -42,7 +41,6 @@ class LogProbDifference(PropensityScore):
 
 
 class NormalizedPositiveProbability(PropensityScore):
-
     requires_probs = True
 
     def get_metric_name(self) -> str:

@@ -1,4 +1,4 @@
-""" Script containing all persona prompts for each evaluation. """
+"""Script containing all persona prompts for each evaluation."""
 
 from dataclasses import dataclass
 from typing import Callable, Literal

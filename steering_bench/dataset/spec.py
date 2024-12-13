@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class DatasetSplit:
-    """ Represents a split of a dataset """
+    """Represents a split of a dataset"""
+
     first_element: str
     second_element: str
 

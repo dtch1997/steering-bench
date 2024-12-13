@@ -1,4 +1,4 @@
-""" Script to do steering with the refusal direction """
+"""Script to do steering with the refusal direction"""
 
 import torch
 import numpy as np
@@ -6,20 +6,18 @@ import pathlib
 
 from steering_vectors import train_steering_vector
 from steering_bench.build_training_data import build_steering_vector_training_data
-from steering_bench.core.evaluate import evaluate_propensities_on_dataset, evaluate
-from steering_bench.utils.torch import load_model_with_quantization, EmptyTorchCUDACache
+from steering_bench.core.evaluate import evaluate
+from steering_bench.utils.torch import load_model_with_quantization
 from steering_bench.dataset import build_dataset, DatasetSpec
 from steering_bench.core.format import Formatter
 from steering_bench.core.pipeline import Pipeline
 from steering_bench.core.propensity import LogProbDifference
 from steering_bench.core.hook import SteeringHook
-from steering_bench.metric import get_steerability_slope
 
 curr_dir = pathlib.Path(__file__).parent.absolute()
 
 
 if __name__ == "__main__":
-
     save_dir = curr_dir / "results"
     save_dir.mkdir(exist_ok=True)
 
@@ -34,7 +32,7 @@ if __name__ == "__main__":
     pipeline = Pipeline(model=model, tokenizer=tokenizer, formatter=formatter)
 
     # Train the steering vector, or load a saved one
-    sv_save_path = save_dir / f"steering_vector.pt"
+    sv_save_path = save_dir / "steering_vector.pt"
     if sv_save_path.exists():
         print("Loading steering vector")
         steering_vector = torch.load(sv_save_path)
