@@ -2,7 +2,7 @@ from inspect_ai.dataset import json_dataset, Sample
 
 from functools import lru_cache
 from steering_bench.core.types import Dataset
-from steering_bench.utils.constants import RAW_DATASET_DIR
+from steering_bench.utils.constants import DATASET_DIR
 from steering_bench.utils.github import (
     download_github_file,
     generate_github_url,
@@ -21,7 +21,7 @@ def _download_dataset(dataset_stem: str) -> tuple[bool, str]:
         raw=True,
     )
     status, msg = download_github_file(
-        github_url, RAW_DATASET_DIR / DATASET_GROUP / f"{dataset_stem}.jsonl"
+        github_url, DATASET_DIR / DATASET_GROUP / f"{dataset_stem}.jsonl"
     )
     return status, msg
 
@@ -60,9 +60,11 @@ def build_mwe_persona_dataset(
     if not status:
         raise RuntimeError(msg)
 
+    # TODO: Preprocessing?
+
     dataset = json_dataset(
         # NOTE: "mwe_v2_xrisk/" prefix is already present in the dataset name
-        str(RAW_DATASET_DIR / DATASET_GROUP / f"{dataset_stem}.jsonl"),
+        str(DATASET_DIR / DATASET_GROUP / f"{dataset_stem}.jsonl"),
         sample_fields=record_to_sample,
     )
     return dataset

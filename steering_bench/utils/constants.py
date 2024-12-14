@@ -8,8 +8,7 @@ PKG_PATH = Path(__file__).parent.parent
 
 PROJ_DIR = Path(__file__).resolve().parents[2]
 ASSETS_DIR = PROJ_DIR / "assets"
-RAW_DATASET_DIR = ASSETS_DIR / "raw_datasets"
-DATASET_DIR = ASSETS_DIR / "processed_datasets"
+DATASET_DIR = ASSETS_DIR / "datasets"
 
 # DEFAULT_EPOCHS = 1
 # DEFAULT_MAX_RETRIES = 5
