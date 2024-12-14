@@ -1,32 +1,32 @@
 import abc
-
 from typing import Any
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from transformers.tokenization_utils_base import PreTrainedTokenizerBase
 from transformers.modeling_utils import PreTrainedModel
 from transformers.generation import GenerationConfig
 
+from inspect_ai.dataset import Sample as _Sample
 
-# Base types
-@dataclass
-class Completion:
-    prompt: str
-    response: str
+# Define Completion as an alias for the Sample type
+Completion = _Sample
 
 
+# Define Example as a dataclass with positive and negative completions
 @dataclass
 class Example:
     positive: Completion
     negative: Completion
-    meta: dict[str, Any] | None = None
     steering_token_index: int = -1  # Token index to extract and apply steering vectors
+    # TODO: support steering at all token indices
+    meta: dict[str, Any] = field(default_factory=dict)
 
+
+# TODO: Support 'unpaired' examples
 
 Dataset = list[Example]
 
 Model = PreTrainedModel
 Tokenizer = PreTrainedTokenizerBase
-
 
 Message = dict[str, str]  # keys: 'role', 'content'
 
@@ -62,8 +62,8 @@ class TextProbs:
         return f"TextProbs({self.text}:{self.sum_logprobs:.2f})"
 
 
-class Pipeline(abc.ABC):
-    """Abstract interface for a text generation pipeline"""
+class Templater(abc.ABC):
+    """Abstract interface for templating a completion as a string to be used as input to a model"""
 
     @abc.abstractmethod
     def build_generation_prompt(self, completion: Completion) -> str:
@@ -73,6 +73,10 @@ class Pipeline(abc.ABC):
     @abc.abstractmethod
     def build_full_prompt(self, completion: Completion) -> str:
         """Build the full prompt from the completion"""
+
+
+class Pipeline(abc.ABC):
+    """Abstract interface for a text generation pipeline"""
 
     @abc.abstractmethod
     def generate(

@@ -8,7 +8,7 @@ from steering_bench.core.types import (
     Model,
     Tokenizer,
     Completion,
-    Formatter,
+    Templater,
     Pipeline as PipelineInterface,
     TokenProb,
     TextProbs,
@@ -30,11 +30,11 @@ class PipelineHook(Protocol):
 
 @dataclass
 class Pipeline(PipelineInterface):
-    """Abstraction for a pipeline that generates completions and calculates logprobs"""
+    """Generates completions and calculates logprobs"""
 
     model: Model
     tokenizer: Tokenizer
-    formatter: Formatter
+    templater: Templater
     hooks: list[PipelineHook] = field(default_factory=list)
 
     @contextmanager
@@ -54,20 +54,6 @@ class Pipeline(PipelineInterface):
             # Restore the original hooks
             self.hooks = orig_hooks
 
-    def build_generation_prompt(self, completion: Completion) -> str:
-        """Build the generation prompt from the completion"""
-        messages = self.formatter(completion.prompt)
-        prompt_str = self.tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True,
-        )
-        return prompt_str  # type: ignore
-
-    def build_full_prompt(self, completion: Completion) -> str:
-        """Build the full prompt from the completion"""
-        return self.build_generation_prompt(completion) + " " + completion.response
-
     def generate(
         self,
         completion: Completion,
@@ -75,7 +61,7 @@ class Pipeline(PipelineInterface):
         remove_base_prompt: bool = True,
     ) -> str:
         """Generate a completion for a given example"""
-        base_prompt = self.build_generation_prompt(completion)
+        base_prompt = self.templater.build_generation_prompt(completion)
         inputs: Any = self.tokenizer(base_prompt, return_tensors="pt")
         inputs = inputs.to(self.model.device)
         context = PipelineContext(
@@ -101,8 +87,8 @@ class Pipeline(PipelineInterface):
     @torch.no_grad()
     def calculate_output_logprobs(self, completion: Completion) -> TextProbs:
         """Calculate the logprobs for each token in the prompt + output"""
-        base_prompt = self.build_generation_prompt(completion)
-        full_prompt = self.build_full_prompt(completion)
+        base_prompt = self.templater.build_generation_prompt(completion)
+        full_prompt = self.templater.build_full_prompt(completion)
         inputs: Any = self.tokenizer(full_prompt, return_tensors="pt")
         inputs = inputs.to(self.model.device)
         context = PipelineContext(
