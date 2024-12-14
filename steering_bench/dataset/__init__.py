@@ -1,5 +1,5 @@
 from .spec import DatasetSpec
-from .build import build_dataset, list_datasets
+from .registry import build_dataset, list_datasets
 
 __all__ = [
     "DatasetSpec",
